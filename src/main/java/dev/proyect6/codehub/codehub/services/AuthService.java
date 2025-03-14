@@ -1,6 +1,7 @@
 package dev.proyect6.codehub.codehub.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -30,6 +31,19 @@ public class AuthService {
                             user.getPassword().equals(credentials.getPassword()))
             .findFirst();
 
+    }
+
+    public Boolean filterAuth(String apiKey) {
+        List<User> users = this.getAllUsers();
+        System.out.println(users);
+        return users.stream()
+            //.filter(user -> user.getUsername().equals(apiKey))
+            .filter(user -> {
+                System.out.println("Verificando usuario: " + user.getUsername() + ", API Key: " + user.getApiKey());
+                return Objects.equals(user.getApiKey(), apiKey);
+            })
+            .findFirst()
+            .isPresent();
     }
 
     

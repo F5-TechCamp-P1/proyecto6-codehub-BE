@@ -14,6 +14,7 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private String apikey;
 
     public Long getId() {
         return id;
@@ -25,6 +26,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getApiKey() {
+        return apikey;
     }
 
 }
