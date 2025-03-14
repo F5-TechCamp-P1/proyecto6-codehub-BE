@@ -27,6 +27,12 @@ public class User {
     public String getPassword() {
         return password;
     }
+    public String getApikey() {
+        return apikey;
+    }
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
 
     public String getApiKey() {
         return apikey;
