@@ -3,15 +3,20 @@ package dev.proyect6.codehub.codehub.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import dev.proyect6.codehub.codehub.models.User;
 import dev.proyect6.codehub.codehub.repositories.AuthRepository;
 
 @Service
+
 public class AuthService {
 
     private AuthRepository authRepository;
+    @Value("${AUTH_APIKEY}")
+    private String apikey;
+
     public AuthService(AuthRepository authRepository) {
         this.authRepository = authRepository;
     }
@@ -31,7 +36,8 @@ public class AuthService {
                                     user.getPassword().equals(credentials.getPassword()))
                     .findFirst();
 
-        userExist.ifPresent(user -> user.setApikey("${AUTH_APIKEY}"));
+        
+        userExist.ifPresent(user -> user.setApikey(apikey));
 
         return userExist;
 

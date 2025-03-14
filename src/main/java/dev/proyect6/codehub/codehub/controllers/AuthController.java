@@ -1,5 +1,7 @@
 package dev.proyect6.codehub.codehub.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,9 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody User credentials) {
         Optional<User> user = authService.authenticate(credentials);
         if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+            Map<String, String> response = Map.of("apiKey", user.get().getApikey());
+            return ResponseEntity.ok(response);
+
         } else {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
         }
