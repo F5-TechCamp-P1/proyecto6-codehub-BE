@@ -25,10 +25,15 @@ public class AuthService {
         if (users == null || users.isEmpty()) {
             return Optional.empty();
         }
-        return users.stream()
-            .filter(user -> user.getUsername().equals(credentials.getUsername()) &&
-                            user.getPassword().equals(credentials.getPassword()))
-            .findFirst();
+        
+        Optional<User> userExist = users.stream()
+                    .filter(user -> user.getUsername().equals(credentials.getUsername()) &&
+                                    user.getPassword().equals(credentials.getPassword()))
+                    .findFirst();
+
+        userExist.ifPresent(user -> user.setApikey("${AUTH_APIKEY}"));
+
+        return userExist;
 
     }
 
