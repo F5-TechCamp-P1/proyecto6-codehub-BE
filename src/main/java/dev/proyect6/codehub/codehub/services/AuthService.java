@@ -49,13 +49,8 @@ public class AuthService {
 
     public Boolean filterAuth(String apiKey) {
         List<User> users = this.getAllUsers();
-        System.out.println(users);
         return users.stream()
-            //.filter(user -> user.getUsername().equals(apiKey))
-            .filter(user -> {
-                System.out.println("Verificando usuario: " + user.getUsername() + ", API Key: " + user.getApiKey());
-                return Objects.equals(user.getApiKey(), apiKey);
-            })
+            .filter(user -> Objects.equals(user.getApiKey(), apiKey))
             .findFirst()
             .isPresent();
     }
