@@ -32,15 +32,18 @@ public class AuthService {
             return Optional.empty();
         }
         
-        Optional<User> userExist = users.stream()
+        Optional<User> userValidated = users.stream()
                     .filter(user -> user.getUsername().equals(credentials.getUsername()) &&
                                     user.getPassword().equals(credentials.getPassword()))
                     .findFirst();
 
-        
-        userExist.ifPresent(user -> user.setApikey(apikey));
+        userValidated.ifPresent(user -> {
+            user.setApikey(apikey);
+            authRepository.save(user);
+        });
 
-        return userExist;
+
+        return userValidated;
 
     }
 

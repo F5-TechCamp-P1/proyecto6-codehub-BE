@@ -1,1 +1,1 @@
-INSERT INTO users (id, username, password, apikey) VALUES (default, 'admin', 'password', '12345abc');
+INSERT INTO users (id, username, password) VALUES (default, 'admin', 'password');
