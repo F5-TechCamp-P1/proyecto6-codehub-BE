@@ -12,7 +12,7 @@ import dev.proyect6.codehub.codehub.models.User;
 import dev.proyect6.codehub.codehub.services.AuthService;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("${api-endpoint}")
 public class AuthController {
     
     private AuthService authService;
