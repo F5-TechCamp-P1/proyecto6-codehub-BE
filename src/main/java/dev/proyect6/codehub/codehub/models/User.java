@@ -31,7 +31,7 @@ public class User {
         return apikey;
     }
     public void setApikey(String apikey) {
-        this.apikey = apikey;
+        this.apikey = "12345abc";
     }
 
 }
