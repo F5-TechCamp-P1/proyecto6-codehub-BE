@@ -1,6 +1,7 @@
 package dev.proyect6.codehub.codehub.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -31,16 +32,32 @@ public class AuthService {
             return Optional.empty();
         }
         
-        Optional<User> userExist = users.stream()
+        Optional<User> userValidated = users.stream()
                     .filter(user -> user.getUsername().equals(credentials.getUsername()) &&
                                     user.getPassword().equals(credentials.getPassword()))
                     .findFirst();
 
-        
-        userExist.ifPresent(user -> user.setApikey(apikey));
+        userValidated.ifPresent(user -> {
+            user.setApikey(apikey);
+            authRepository.save(user);
+        });
 
-        return userExist;
 
+        return userValidated;
+
+    }
+
+    public Boolean filterAuth(String apiKey) {
+        List<User> users = this.getAllUsers();
+        System.out.println(users);
+        return users.stream()
+            //.filter(user -> user.getUsername().equals(apiKey))
+            .filter(user -> {
+                System.out.println("Verificando usuario: " + user.getUsername() + ", API Key: " + user.getApiKey());
+                return Objects.equals(user.getApiKey(), apiKey);
+            })
+            .findFirst()
+            .isPresent();
     }
 
     

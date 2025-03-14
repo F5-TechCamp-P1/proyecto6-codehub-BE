@@ -1,6 +1,5 @@
 package dev.proyect6.codehub.codehub.controllers;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,4 +32,5 @@ public class AuthController {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
         }
     }
+    
 }

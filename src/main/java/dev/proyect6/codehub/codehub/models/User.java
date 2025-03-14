@@ -34,4 +34,8 @@ public class User {
         this.apikey = apikey;
     }
 
+    public String getApiKey() {
+        return apikey;
+    }
+
 }
