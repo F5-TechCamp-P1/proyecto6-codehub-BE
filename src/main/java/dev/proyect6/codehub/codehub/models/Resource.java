@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 
 @Entity
+@Table(name = "resources")
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +17,10 @@ public class Resource {
     private String title;
 
     @NotBlank(message = "La URL del archivo no puede estar vacía")
+    @Column(name = "file_url")
     private String fileUrl;
-
+    
+    @Column(name = "upload_date")
     private LocalDate uploadDate;
 
     @ManyToOne
