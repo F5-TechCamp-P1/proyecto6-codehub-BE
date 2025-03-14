@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("${api-endpoint}/categories")
 @Validated
 public class CategoryController {
     @Autowired
