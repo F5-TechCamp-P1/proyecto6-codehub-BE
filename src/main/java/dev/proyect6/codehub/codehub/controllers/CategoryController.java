@@ -70,3 +70,4 @@ public class CategoryController {
         }
     }
 }
+//arreglar el products en category y poner el nombre de la categoria en recursos

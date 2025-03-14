@@ -1,7 +1,9 @@
 package dev.proyect6.codehub.codehub.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
+
 
 @Entity
 public class Resource {
@@ -9,13 +11,23 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    
+    @NotBlank(message = "El título no puede estar vacío")
     private String title;
+
+    @NotBlank(message = "La URL del archivo no puede estar vacía")
     private String fileUrl;
+
     private LocalDate uploadDate;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @PrePersist
+    protected void onCreate() {
+        this.uploadDate = LocalDate.now();
+    }
 
     public Long getId() {
         return id;
@@ -44,4 +56,8 @@ public class Resource {
         this.fileUrl = fileUrl;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
 }
