@@ -31,9 +31,8 @@ public class CategoryController {
         this.authService = authService;
     }
 
-
     @GetMapping
-    public ResponseEntity<?> getAllCategories(@RequestHeader("X-API-KEY") String apiKey) {
+    public ResponseEntity<?> getAllCategories(@RequestHeader(value = "X-API-KEY", required = false) String apiKey) {
         Boolean user = authService.filterAuth(apiKey);
         if (!user) {
             return ResponseEntity.status(401).body("Apikey incorrecta");        
