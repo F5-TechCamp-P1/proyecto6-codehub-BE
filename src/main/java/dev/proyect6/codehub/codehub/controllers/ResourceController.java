@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.proyect6.codehub.codehub.config.AuthFilter;
 import dev.proyect6.codehub.codehub.models.Resource;
-import dev.proyect6.codehub.codehub.services.AuthService;
 import dev.proyect6.codehub.codehub.services.ResourceService;
 import jakarta.validation.Valid;
 
@@ -23,40 +23,33 @@ import jakarta.validation.Valid;
 public class ResourceController {
 
     private ResourceService resourceService;
-    private AuthService authService;
+    private AuthFilter authFilter;
 
-    public ResourceController(ResourceService resourceService, AuthService authService) {
+    public ResourceController(ResourceService resourceService, AuthFilter authFilter) {
         this.resourceService = resourceService;
-        this.authService = authService;
+        this.authFilter = authFilter;
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllResources(@RequestHeader(value = "X-API-KEY", required = false) String apiKey) {
-        Boolean userExist = false;
-        if (apiKey != null) {
-            userExist = authService.filterAuth(apiKey);
-        }
-        if (!userExist) {
-            return ResponseEntity.status(401).body("Apikey incorrecta");
-        }
+   
 
+    @GetMapping
+    public ResponseEntity<?> getAllResources(@RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         return ResponseEntity.ok(resourceService.getAllResources());
     }
 
-    /*@GetMapping
-    public List<Resource> getAllResources() {
-        return resourceService.getAllResources();
-    }*/
-
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getResourceById(@PathVariable Long id) {
-        return resourceService.getResourceById(id)
+    public ResponseEntity<?> getResourceById(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
+        ResponseEntity<?> response = resourceService.getResourceById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<?> createResource(@RequestBody Resource resource) {
+    public ResponseEntity<?> createResource(@RequestBody Resource resource, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
             Resource savedResource = resourceService.saveResource(resource);
             return ResponseEntity.ok(savedResource);
@@ -66,7 +59,8 @@ public class ResourceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateResource(@PathVariable Long id, @Valid @RequestBody Resource resource) {
+    public ResponseEntity<?> updateResource(@PathVariable Long id, @Valid @RequestBody Resource resource, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
             Resource updatedResource = resourceService.updateResource(id, resource);
             return ResponseEntity.ok(updatedResource);
@@ -76,7 +70,8 @@ public class ResourceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResource(@PathVariable Long id) {
+    public ResponseEntity<?> deleteResource(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         resourceService.deleteResource(id);
         return ResponseEntity.noContent().build();
     }
