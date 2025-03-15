@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.proyect6.codehub.codehub.config.AuthFilter;
 import dev.proyect6.codehub.codehub.models.Category;
-import dev.proyect6.codehub.codehub.services.AuthService;
 import dev.proyect6.codehub.codehub.services.CategoryService;
 import jakarta.validation.Valid;
 
@@ -24,46 +24,43 @@ import jakarta.validation.Valid;
 public class CategoryController {
 
     private CategoryService categoryService;
-    private AuthService authService;
+    private AuthFilter authFilter;
 
-    public CategoryController(CategoryService categoryService, AuthService authService) {
+    public CategoryController(CategoryService categoryService, AuthFilter authFilter) {
         this.categoryService = categoryService;
-        this.authService = authService;
+        this.authFilter = authFilter;
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllCategories(@RequestHeader(value = "X-API-KEY", required = false) String apiKey) {
-        Boolean userExist = false;
-        if(apiKey!= null){
-            userExist = authService.filterAuth(apiKey);
-        }
-        if (!userExist) {
-            return ResponseEntity.status(401).body("Apikey incorrecta");        
-        }
-
+    public ResponseEntity<?> getAllCategories(@RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
-     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCategoryById(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         return categoryService.getCategoryById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> createCategory(@Valid @RequestBody Category category) {
+    public ResponseEntity<?> createCategory(@Valid @RequestBody Category category, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         return ResponseEntity.ok(categoryService.saveCategory(category));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Categoría borrada exitosamente");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody Category updatedCategory) {
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @Valid @RequestBody Category updatedCategory, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
             Category updated = categoryService.updateCategory(id, updatedCategory);
             return ResponseEntity.ok(updated);
@@ -72,4 +69,3 @@ public class CategoryController {
         }
     }
 }
-//arreglar el products en category y poner el nombre de la categoria en recursos

@@ -16,6 +16,7 @@ import dev.proyect6.codehub.codehub.config.AuthFilter;
 import dev.proyect6.codehub.codehub.dto.ResourceDTO;
 import dev.proyect6.codehub.codehub.models.Resource;
 import dev.proyect6.codehub.codehub.services.ResourceService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("${api-endpoint}/resources")
@@ -29,8 +30,6 @@ public class ResourceController {
         this.resourceService = resourceService;
         this.authFilter = authFilter;
     }
-
-   
 
     @GetMapping
     public ResponseEntity<?> getAllResources(@RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
@@ -51,6 +50,7 @@ public class ResourceController {
     public ResponseEntity<?> createResource(@RequestBody ResourceDTO resourceDTO, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
         if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
+            @Valid
             Resource savedResource = resourceService.saveResource(resourceDTO);
             return ResponseEntity.ok(savedResource);
         } catch (IllegalArgumentException e) {
@@ -62,6 +62,7 @@ public class ResourceController {
     public ResponseEntity<?> updateResource(@PathVariable Long id, @RequestBody ResourceDTO resourceDTO, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
         if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
+            @Valid
             Resource updatedResource = resourceService.updateResource(id, resourceDTO);
             return ResponseEntity.ok(updatedResource);
         } catch (IllegalArgumentException e) {

@@ -77,4 +77,12 @@ public class ResourceService {
                 .orElseThrow(() -> new IllegalArgumentException("Categoría con ID " + categoryId + " no encontrada"));
         return category;
     }
+
+    public void deleteResourcesByCategory(Long id) {
+        getAllResources().forEach(resource -> {
+            if (resource.getCategory().getId() == id) {
+                deleteResource(resource.getId());
+            }
+        });
+    }
 }
