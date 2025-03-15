@@ -16,7 +16,6 @@ import dev.proyect6.codehub.codehub.config.AuthFilter;
 import dev.proyect6.codehub.codehub.dto.ResourceDTO;
 import dev.proyect6.codehub.codehub.models.Resource;
 import dev.proyect6.codehub.codehub.services.ResourceService;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("${api-endpoint}/resources")
@@ -74,6 +73,6 @@ public class ResourceController {
     public ResponseEntity<?> deleteResource(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
         if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         resourceService.deleteResource(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Recurso borrado exitosamente");
     }
 }
