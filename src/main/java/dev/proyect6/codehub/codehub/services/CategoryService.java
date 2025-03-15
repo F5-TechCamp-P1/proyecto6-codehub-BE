@@ -12,6 +12,9 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ResourceService resourceService;
+
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
@@ -21,10 +24,16 @@ public class CategoryService {
     }
 
     public Category saveCategory(Category category) {
-        return categoryRepository.save(category);
+        try {
+            categoryRepository.save(category);
+        } catch (Exception e) {
+            throw new RuntimeException("La categoría ya existe");
+        }
+        return category;
     }
 
     public void deleteCategory(Long id) {
+        resourceService.deleteResourcesByCategory(id);
         categoryRepository.deleteById(id);
     }
 
@@ -34,6 +43,6 @@ public class CategoryService {
                 category.setName(updatedCategory.getName());
                 return categoryRepository.save(category);
             })
-            .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada con id: " + id));
     }
 }

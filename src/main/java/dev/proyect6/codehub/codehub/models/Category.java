@@ -10,6 +10,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank(message = "El nombre de la categoría no puede estar vacío")
+    @Column(unique = true)
     private String name;
 
     public Long getId() {
