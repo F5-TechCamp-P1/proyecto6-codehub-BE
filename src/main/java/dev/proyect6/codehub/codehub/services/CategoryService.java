@@ -12,6 +12,9 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ResourceService resourceService;
+
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
@@ -25,6 +28,7 @@ public class CategoryService {
     }
 
     public void deleteCategory(Long id) {
+        resourceService.deleteResourcesByCategory(id);
         categoryRepository.deleteById(id);
     }
 
