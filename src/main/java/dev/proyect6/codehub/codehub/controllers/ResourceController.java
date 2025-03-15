@@ -1,54 +1,68 @@
 package dev.proyect6.codehub.codehub.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.proyect6.codehub.codehub.config.AuthFilter;
+import dev.proyect6.codehub.codehub.dto.ResourceDTO;
 import dev.proyect6.codehub.codehub.models.Resource;
 import dev.proyect6.codehub.codehub.services.ResourceService;
-import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("${api-endpoint}/resources")
+@Validated
 public class ResourceController {
-    @Autowired
+
     private ResourceService resourceService;
+    private AuthFilter authFilter;
+
+    public ResourceController(ResourceService resourceService, AuthFilter authFilter) {
+        this.resourceService = resourceService;
+        this.authFilter = authFilter;
+    }
+
+   
 
     @GetMapping
-    public List<Resource> getAllResources() {
-        return resourceService.getAllResources();
+    public ResponseEntity<?> getAllResources(@RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
+        return ResponseEntity.ok(resourceService.getAllResources());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getResourceById(@PathVariable Long id) {
-        return resourceService.getResourceById(id)
+    public ResponseEntity<?> getResourceById(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
+        ResponseEntity<?> response = resourceService.getResourceById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+        return response;
     }
 
     @PostMapping
-    public ResponseEntity<?> createResource(@RequestBody Resource resource) {
+    public ResponseEntity<?> createResource(@RequestBody ResourceDTO resourceDTO, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
-            Resource savedResource = resourceService.saveResource(resource);
+            Resource savedResource = resourceService.saveResource(resourceDTO);
             return ResponseEntity.ok(savedResource);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-     @PutMapping("/{id}")
-    public ResponseEntity<?> updateResource(@PathVariable Long id, @Valid @RequestBody Resource resource) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateResource(@PathVariable Long id, @RequestBody ResourceDTO resourceDTO, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
-            Resource updatedResource = resourceService.updateResource(id, resource);
+            Resource updatedResource = resourceService.updateResource(id, resourceDTO);
             return ResponseEntity.ok(updatedResource);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -56,8 +70,9 @@ public class ResourceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResource(@PathVariable Long id) {
+    public ResponseEntity<?> deleteResource(@PathVariable Long id, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+        if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         resourceService.deleteResource(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Recurso borrado exitosamente");
     }
 }

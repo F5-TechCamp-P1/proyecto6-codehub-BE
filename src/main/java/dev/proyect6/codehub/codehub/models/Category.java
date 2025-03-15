@@ -1,10 +1,10 @@
 package dev.proyect6.codehub.codehub.models;
 
-import jakarta.persistence.*; 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-
-    @Entity
+@Entity
+@Table(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +20,8 @@ public class Category {
         return name;
     }
 
-    
-    
     public void setName(String name) {
         this.name = name;
     }
- 
-    
-}
 
+}

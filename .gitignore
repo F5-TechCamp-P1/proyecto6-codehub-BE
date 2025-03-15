@@ -110,3 +110,4 @@ nb-configuration.xml
 *.zip
 *.tar.gz
 *.rar
+META-INF

@@ -3,9 +3,9 @@ package dev.proyect6.codehub.codehub.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.proyect6.codehub.codehub.dto.ResourceDTO;
 import dev.proyect6.codehub.codehub.models.Category;
 import dev.proyect6.codehub.codehub.models.Resource;
 import dev.proyect6.codehub.codehub.repositories.CategoryRepository;
@@ -13,11 +13,14 @@ import dev.proyect6.codehub.codehub.repositories.ResourceRepository;
 
 @Service
 public class ResourceService {
-    @Autowired
-    private ResourceRepository resourceRepository;
 
-    @Autowired
+    private ResourceRepository resourceRepository;
     private CategoryRepository categoryRepository;
+
+    public ResourceService(ResourceRepository resourceRepository, CategoryRepository categoryRepository) {
+        this.resourceRepository = resourceRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     public List<Resource> getAllResources() {
         return resourceRepository.findAll();
@@ -27,17 +30,17 @@ public class ResourceService {
         return resourceRepository.findById(id);
     }
 
-    public Resource saveResource(Resource resource) {
-        validateResource(resource);
-        validateAndAssignCategory(resource);
+    public Resource saveResource(ResourceDTO resourceDTO) {
+        Resource resource = validateResource(resourceDTO);
+        
         return resourceRepository.save(resource);
     }
 
-    public Resource updateResource(Long id, Resource newResource) {
+    public Resource updateResource(Long id, ResourceDTO resourceDTO) {
+        Resource newResource = validateResource(resourceDTO);
+
         return resourceRepository.findById(id)
                 .map(existingResource -> {
-                    validateResource(newResource);
-                    validateAndAssignCategory(newResource);
 
                     existingResource.setTitle(newResource.getTitle());
                     existingResource.setFileUrl(newResource.getFileUrl());
@@ -52,21 +55,26 @@ public class ResourceService {
         resourceRepository.deleteById(id);
     }
 
-    private void validateResource(Resource resource) {
+    private Resource validateResource(ResourceDTO resourceDTO) {        
+        Category category = validateAndAssignCategory(resourceDTO.getCategoryId());
+        
+        Resource resource = new Resource();
+        resource.setTitle(resourceDTO.getTitle());
+        resource.setFileUrl(resourceDTO.getFileUrl());
+        resource.setCategory(category);
         if (resource.getTitle() == null || resource.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("El título no puede estar vacío");
         }
         if (resource.getFileUrl() == null || resource.getFileUrl().trim().isEmpty()) {
             throw new IllegalArgumentException("La URL del archivo no puede estar vacía");
-        }
+        }     
+        
+        return resource;
     }
 
-    private void validateAndAssignCategory(Resource resource) {
-        if (resource.getCategory() != null && resource.getCategory().getId() != null) {
-            Long categoryId = resource.getCategory().getId();
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new IllegalArgumentException("Categoría con ID " + categoryId + " no encontrada"));
-            resource.setCategory(category);
-        }
+    private Category validateAndAssignCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Categoría con ID " + categoryId + " no encontrada"));
+        return category;
     }
 }
