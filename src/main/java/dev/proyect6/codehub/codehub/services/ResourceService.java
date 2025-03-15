@@ -29,21 +29,16 @@ public class ResourceService {
     }
 
     public Resource saveResource(ResourceDTO resourceDTO) {
-        Category category = validateAndAssignCategory(resourceDTO.getCategoryId());
-
-        Resource resource = new Resource();
-        resource.setTitle(resourceDTO.getTitle());
-        resource.setFileUrl(resourceDTO.getFileUrl());
-        resource.setCategory(category);        
+        Resource resource = validateResource(resourceDTO);
         
-        validateResource(resource);
         return resourceRepository.save(resource);
     }
 
-    public Resource updateResource(Long id, Resource newResource) {
+    public Resource updateResource(Long id, ResourceDTO resourceDTO) {
+        Resource newResource = validateResource(resourceDTO);
+
         return resourceRepository.findById(id)
                 .map(existingResource -> {
-                    validateResource(newResource);
 
                     existingResource.setTitle(newResource.getTitle());
                     existingResource.setFileUrl(newResource.getFileUrl());
@@ -58,13 +53,21 @@ public class ResourceService {
         resourceRepository.deleteById(id);
     }
 
-    private void validateResource(Resource resource) {
+    private Resource validateResource(ResourceDTO resourceDTO) {        
+        Category category = validateAndAssignCategory(resourceDTO.getCategoryId());
+        
+        Resource resource = new Resource();
+        resource.setTitle(resourceDTO.getTitle());
+        resource.setFileUrl(resourceDTO.getFileUrl());
+        resource.setCategory(category);
         if (resource.getTitle() == null || resource.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("El título no puede estar vacío");
         }
         if (resource.getFileUrl() == null || resource.getFileUrl().trim().isEmpty()) {
             throw new IllegalArgumentException("La URL del archivo no puede estar vacía");
-        }
+        }     
+        
+        return resource;
     }
 
     private Category validateAndAssignCategory(Long categoryId) {

@@ -60,10 +60,10 @@ public class ResourceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateResource(@PathVariable Long id, @Valid @RequestBody Resource resource, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+    public ResponseEntity<?> updateResource(@PathVariable Long id, @RequestBody ResourceDTO resourceDTO, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
         if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
-            Resource updatedResource = resourceService.updateResource(id, resource);
+            Resource updatedResource = resourceService.updateResource(id, resourceDTO);
             return ResponseEntity.ok(updatedResource);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
