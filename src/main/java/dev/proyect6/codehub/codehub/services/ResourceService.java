@@ -14,11 +14,14 @@ import dev.proyect6.codehub.codehub.repositories.ResourceRepository;
 
 @Service
 public class ResourceService {
-    @Autowired
-    private ResourceRepository resourceRepository;
 
-    @Autowired
+    private ResourceRepository resourceRepository;
     private CategoryRepository categoryRepository;
+
+    public ResourceService(ResourceRepository resourceRepository, CategoryRepository categoryRepository) {
+        this.resourceRepository = resourceRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     public List<Resource> getAllResources() {
         return resourceRepository.findAll();
