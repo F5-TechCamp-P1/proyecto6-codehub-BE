@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.proyect6.codehub.codehub.config.AuthFilter;
+import dev.proyect6.codehub.codehub.dto.ResourceDTO;
 import dev.proyect6.codehub.codehub.models.Resource;
 import dev.proyect6.codehub.codehub.services.ResourceService;
 import jakarta.validation.Valid;
@@ -44,14 +45,14 @@ public class ResourceController {
         ResponseEntity<?> response = resourceService.getResourceById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @PostMapping
-    public ResponseEntity<?> createResource(@RequestBody Resource resource, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
+    public ResponseEntity<?> createResource(@RequestBody ResourceDTO resourceDTO, @RequestHeader(name = "X-API-KEY", required = false) String apiKey) {
         if (!authFilter.preHandle(apiKey)) return ResponseEntity.status(401).body("Apikey incorrecta");
         try {
-            Resource savedResource = resourceService.saveResource(resource);
+            Resource savedResource = resourceService.saveResource(resourceDTO);
             return ResponseEntity.ok(savedResource);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
