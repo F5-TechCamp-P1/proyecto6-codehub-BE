@@ -24,7 +24,12 @@ public class CategoryService {
     }
 
     public Category saveCategory(Category category) {
-        return categoryRepository.save(category);
+        try {
+            categoryRepository.save(category);
+        } catch (Exception e) {
+            throw new RuntimeException("La categoría ya existe");
+        }
+        return category;
     }
 
     public void deleteCategory(Long id) {
@@ -38,6 +43,6 @@ public class CategoryService {
                 category.setName(updatedCategory.getName());
                 return categoryRepository.save(category);
             })
-            .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada con id: " + id));
     }
 }
