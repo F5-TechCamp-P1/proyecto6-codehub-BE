@@ -112,6 +112,6 @@ class CategoryServiceTest {
             categoryService.updateCategory(nonExistentId, updatedCategory);
         });
 
-        assertThat(exception.getMessage(), is("Category not found with id: " + nonExistentId));
+        assertThat(exception.getMessage(), is("Categoría no encontrada con id: " + nonExistentId));
     }
 }
