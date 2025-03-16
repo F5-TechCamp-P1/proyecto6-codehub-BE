@@ -1,7 +1,6 @@
 package dev.proyect6.codehub.codehub.controllers;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,8 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -73,6 +70,35 @@ public class AuthControllerTest {
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString(apiKey));
+
+    }
+    @Test
+    @DisplayName("Test login with bad credentials")
+    void testLoginWithBadCredentials() throws Exception {
+        //GIVEN
+        User credentials = new User();
+        credentials.setUsername("admin");
+        credentials.setPassword("BADpassword");
+
+        //WHEN
+        when(authService.authenticate(any(User.class))).thenReturn(Optional.empty());
+        
+        MockHttpServletResponse response = mockMvc
+        .perform(            
+            post("/api/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(credentials))
+            .accept(MediaType.APPLICATION_JSON)
+        )
+        .andExpect(status().isUnauthorized())
+        .andReturn()
+        .getResponse();
+        
+        System.out.println(response.getContentAsString());
+        //THEN
+
+        assertThat(response.getStatus(), is(401));
+        assertThat(response.getContentAsString(), containsString("Credenciales incorrectas"));
 
     }
 }
