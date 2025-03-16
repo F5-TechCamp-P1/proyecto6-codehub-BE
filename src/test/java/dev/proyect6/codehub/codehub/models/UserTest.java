@@ -9,7 +9,7 @@ public class UserTest {
         User user = new User();
         String expectedApiKey = "test-api-key";
         user.setApikey(expectedApiKey);
-        assertEquals(expectedApiKey, user.getApiKey());
+        assertEquals(expectedApiKey, user.getApikey());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class UserTest {
         User user = new User();
         String expectedApiKey = "test-api-key";
         user.setApikey(expectedApiKey);
-        assertEquals(expectedApiKey, user.getApiKey());
+        assertEquals(expectedApiKey, user.getApikey());
     }
 
     @Test

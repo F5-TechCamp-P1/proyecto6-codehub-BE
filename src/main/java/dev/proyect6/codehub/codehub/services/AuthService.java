@@ -50,7 +50,7 @@ public class AuthService {
     public Boolean filterAuth(String apiKey) {
         List<User> users = this.getAllUsers();
         return users.stream()
-            .filter(user -> Objects.equals(user.getApiKey(), apiKey))
+            .filter(user -> Objects.equals(user.getApikey(), apiKey))
             .findFirst()
             .isPresent();
     }
