@@ -21,6 +21,9 @@ class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    @Mock 
+    private ResourceService resourceService; 
+
     @InjectMocks
     private CategoryService categoryService;
 
@@ -72,15 +75,16 @@ class CategoryServiceTest {
         verify(categoryRepository, times(1)).save(category);
     }
 
-    @Test
-    void testDeleteCategory() {
-        Long categoryId = 1L;
+    @Test 
+    void testDeleteCategory() { 
+        Long categoryId = 1L; 
 
+        doNothing().when(resourceService).deleteResourcesByCategory(categoryId); 
         doNothing().when(categoryRepository).deleteById(categoryId);
 
-        categoryService.deleteCategory(categoryId);
-
-        verify(categoryRepository, times(1)).deleteById(categoryId);
+        categoryService.deleteCategory(categoryId); 
+        verify(resourceService, times(1)).deleteResourcesByCategory(categoryId); 
+        verify(categoryRepository, times(1)).deleteById(categoryId); 
     }
 
     @Test
