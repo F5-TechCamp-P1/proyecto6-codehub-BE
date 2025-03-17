@@ -42,7 +42,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("Test login")
     void testLogin() throws Exception {
-        //GIVEN
+
         User credentials = new User();
         String apiKey = "12345abc";
 
@@ -51,7 +51,6 @@ public class AuthControllerTest {
         credentials.setUsername("admin");
         credentials.setPassword("password");
 
-        //WHEN
         when(authService.authenticate(any(User.class))).thenReturn(Optional.of(okUser));
         
         MockHttpServletResponse response = mockMvc
@@ -66,7 +65,6 @@ public class AuthControllerTest {
         .getResponse();
         
         System.out.println(response.getContentAsString());
-        //THEN
 
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString(apiKey));
@@ -75,12 +73,11 @@ public class AuthControllerTest {
     @Test
     @DisplayName("Test login with bad credentials")
     void testLoginWithBadCredentials() throws Exception {
-        //GIVEN
+
         User credentials = new User();
         credentials.setUsername("admin");
         credentials.setPassword("BADpassword");
 
-        //WHEN
         when(authService.authenticate(any(User.class))).thenReturn(Optional.empty());
         
         MockHttpServletResponse response = mockMvc
@@ -95,7 +92,6 @@ public class AuthControllerTest {
         .getResponse();
         
         System.out.println(response.getContentAsString());
-        //THEN
 
         assertThat(response.getStatus(), is(401));
         assertThat(response.getContentAsString(), containsString("Credenciales incorrectas"));

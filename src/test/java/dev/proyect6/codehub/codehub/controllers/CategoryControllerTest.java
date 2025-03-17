@@ -52,7 +52,7 @@ public class CategoryControllerTest {
     @BeforeEach
 
     void setUp() {
-        //GIVEN
+
         Category category = new Category(); 
         category.setName("Category 1");
         Category category2 = new Category(); 
@@ -69,7 +69,6 @@ public class CategoryControllerTest {
         when(authFilter.preHandle(anyString())).thenReturn(true); 
         when(categoryService.getAllCategories()).thenReturn(categories);
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             get("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,7 +80,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEN
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString("Category 1"));
         assertThat(response.getContentAsString(), containsString("Category 2"));
@@ -90,11 +88,11 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Test getAllCategories with bad apikey")
     void testGetAllCategoriesWithBadApikey() throws Exception {
-        //WHEN
+
         when(authFilter.preHandle(anyString())).thenReturn(false); 
-              
+
         when(categoryService.getAllCategories()).thenReturn(categories);
-       //WHEN
+
         MockHttpServletResponse response = mockMvc.perform(
         get("/api/categories")
             .contentType(MediaType.APPLICATION_JSON)
@@ -105,8 +103,7 @@ public class CategoryControllerTest {
         .andExpect(status().isUnauthorized())
         .andReturn()
         .getResponse();
-
-        //THEN        
+    
         assertThat(response.getStatus(), is(401));
         assertThat(response.getContentAsString(), containsString("Apikey incorrecta"));
     }
@@ -114,14 +111,12 @@ public class CategoryControllerTest {
     @DisplayName("Test createCategory")
     void testCreateCategory() throws Exception {
 
-        //GIVEN
         Category category = new Category();
         category.setName("Category 3");
 
         when(authFilter.preHandle(anyString())).thenReturn(true); 
         when(categoryService.saveCategory(any(Category.class))).thenReturn(category);
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +129,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEn
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString("Category 3"));
 
@@ -143,14 +137,12 @@ public class CategoryControllerTest {
     @DisplayName("Test createCategory with bad apikey")
     void testCreateCategoryWithBadApikey() throws Exception {
 
-        //GIVEN
         Category category = new Category();
         category.setName("Category 3");
 
         when(authFilter.preHandle(anyString())).thenReturn(false); 
         when(categoryService.saveCategory(any(Category.class))).thenReturn(category);
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -163,7 +155,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEn
         assertThat(response.getStatus(), is(401));
         assertThat(response.getContentAsString(), containsString("Apikey incorrecta"));
     }
@@ -171,13 +162,11 @@ public class CategoryControllerTest {
     @DisplayName("Test updateCategory")
     void testUpdateCategory() throws Exception {
 
-        //GIVEN
         Category category = categories.get(0);
         category.setName("Category 3");
         when(authFilter.preHandle(anyString())).thenReturn(true); 
         when(categoryService.updateCategory(anyLong(), any(Category.class))).thenReturn(category);
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             put("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -190,7 +179,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEn
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString("Category 3"));
 
@@ -198,14 +186,12 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Test updateCategory with bad apikey")
     void testUpdateCategoryWithBadApikey() throws Exception {    
-
-        //GIVEN        
+    
         Category category = categories.get(0);
         category.setName("Category 3");
         when(authFilter.preHandle(anyString())).thenReturn(false); 
         when(categoryService.updateCategory(anyLong(), any(Category.class))).thenReturn(category);
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             put("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -218,7 +204,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEN
         assertThat(response.getStatus(), is(401));
         assertThat(response.getContentAsString(), containsString("Apikey incorrecta"));
     }
@@ -226,12 +211,11 @@ public class CategoryControllerTest {
     @DisplayName("Test updateCategory with bad id")
     void testUpdateCategoryWithBadId() throws Exception {
 
-        //GIVEN        
         Category category = categories.get(0);
         when(authFilter.preHandle(anyString())).thenReturn(true); 
         when(categoryService.updateCategory(eq(4L), any(Category.class)))
             .thenThrow(new RuntimeException("Category not found"));
-        //WHEN
+
         MockHttpServletResponse response = mockMvc.perform(
             put("/api/categories/4")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -244,16 +228,15 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEN
         assertThat(response.getStatus(), is(404));        
     }
     @Test
     @DisplayName("Test deleteCategory")
     void testDeleteCategory() throws Exception {
 
-        //GIVEN        
+    
         when(authFilter.preHandle(anyString())).thenReturn(true); 
-        //WHEN
+
         MockHttpServletResponse response = mockMvc.perform(
             delete("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -266,7 +249,6 @@ public class CategoryControllerTest {
             .getResponse();        
 
 
-        //THEN
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString("Categoría borrada exitosamente"));       
     }
@@ -274,9 +256,9 @@ public class CategoryControllerTest {
     @DisplayName("Test deleteCategory with bad apikey")
     void testDeleteCategoryWithBadApikey() throws Exception {
 
-        //GIVEN        
+    
         when(authFilter.preHandle(anyString())).thenReturn(false); 
-        //WHEN
+
         MockHttpServletResponse response = mockMvc.perform(
             delete("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -289,7 +271,6 @@ public class CategoryControllerTest {
             .getResponse();        
 
 
-        //THEN
         assertThat(response.getStatus(), is(401));
         assertThat(response.getContentAsString(), containsString("Apikey incorrecta"));       
     }
@@ -297,11 +278,10 @@ public class CategoryControllerTest {
     @DisplayName("Test getCategoryById")
     void testGetCategoryById() throws Exception {
 
-        //GIVEN
+
         when(authFilter.preHandle(anyString())).thenReturn(true); 
         when(categoryService.getCategoryById(1L)).thenReturn(Optional.of(categories.get(0)));
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             get("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -313,7 +293,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEN
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentAsString(), containsString("Category 1"));
     }
@@ -322,11 +301,9 @@ public class CategoryControllerTest {
     @DisplayName("Test getCategoryById with bad apikey")
     void testGetCategoryByIdWithBadApikey() throws Exception {
 
-        //GIVEN
         when(authFilter.preHandle(anyString())).thenReturn(false);                
         when(categoryService.getCategoryById(1L)).thenReturn(Optional.of(categories.get(0)));
 
-        //WHEN
         MockHttpServletResponse response = mockMvc.perform(
             get("/api/categories/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -338,7 +315,6 @@ public class CategoryControllerTest {
             .andReturn()
             .getResponse();
 
-        //THEN
         assertThat(response.getStatus(), is(401));
         assertThat(response.getContentAsString(), containsString("Apikey incorrecta"));
     }

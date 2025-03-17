@@ -177,7 +177,7 @@ class ResourceServiceTest {
 
     @Test
     void testUpdateResourceThrowsExceptionForNonExistingResource() {
-        // Crear DTO para la actualización
+
         ResourceDTO updatedResourceDTO = new ResourceDTO();
         updatedResourceDTO.setTitle("Updated Title");
         updatedResourceDTO.setUrl("http://example.com/updated");
